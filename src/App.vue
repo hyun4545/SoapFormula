@@ -1,24 +1,24 @@
 <template>
-<div class="vh-100 overflow-hidden">
- <v-nav/>
-  <router-view/>
-</div> 
+  <div class="vh-100 overflow-hidden">
+    <v-nav />
+    <router-view />
+  </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import vNav from '@/views/Nav.vue'
+<script lang="ts">
+import { defineComponent, reactive } from "vue";
+import vNav from "./views/Nav.vue";
 
 export default defineComponent({
   setup() {
-    
-  },
-  components:{
-    vNav
-  }
-})
-</script>
 
+  
+  },
+  components: {
+    vNav,
+  },
+});
+</script>
 
 <style>
 #app {

@@ -13,8 +13,11 @@
           <button class="nav-btn">
             <span class="material-icons-outlined"> add </span>新增
           </button>
-          <button class="nav-btn">
+          <button class="nav-btn" @click="saveFormula()">
             <span class="material-icons-outlined"> save </span>儲存
+          </button>
+          <button v-if="this.id" class="nav-btn" @click="deleteFormula()">
+            <span class="material-icons-outlined"> delete </span>刪除
           </button>
           <button class="nav-btn">
             <span class="material-icons-outlined"> remove_red_eye </span>預覽
@@ -25,6 +28,7 @@
           <input type="text" class="form-control" placeholder="輸入配方名稱" />
         </div>
 
+        <!-- 原料油列表 -->
         <div class="card mx-auto mt-3">
           <div class="card-header d-flex align-items-center">
             原料油列表
@@ -41,7 +45,7 @@
               </tr>
             </thead>
             <tbody>
-              <template v-for="item in oilList" v-bind:key="item.id">
+              <template v-for="item in formula.oilItems" v-bind:key="item.id">
                 <tr>
                   <td style="width: 60%">
                     <select class="form-control">
@@ -56,6 +60,8 @@
           </table>
         </div>
       </div>
+
+      <!-- 計算結果 -->
       <div class="col-md-4 col-sm-12 pb-5 pt-3">
         <div class="accordion">
           <div class="accordion-item">
@@ -77,47 +83,59 @@
               aria-labelledby="headingOne"
               data-bs-parent="#accordionExample"
             >
-              <div class="accordion-body">
+              <div id="output-body" class="accordion-body">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex gap-2 align-items-center">
+                  <li class="outcome-list">
                     NaOH:
                     <div class="input-group px-3" style="min-width: 150px">
                       <button
                         class="btn btn-outline-secondary"
                         type="button"
-                        @click="plusNaOHPer()"
+                        @click="naOHPer++"
                       >
                         +
                       </button>
                       <input
                         type="text"
                         class="form-control"
-                        v-model="naOHPer"
+                        v-model="formula.alkali_per"
                       />
                       <button
                         class="btn btn-outline-secondary"
                         type="button"
-                        @click="minusNaOHPer()"
+                        @click="naOHPer--"
                       >
                         -
                       </button>
                     </div>
                     %
                   </li>
-                  <li class="list-group-item d-flex gap-2 align-items-center">
+                  <li class="outcome-list">
                     NaOH:
-                    <input type="text" class="form-control w-50" disabled /> g
+                    <input
+                      type="text"
+                      class="form-control w-50"
+                      v-model="alkali"
+                      disabled
+                    />
+                    g
                   </li>
-                  <li class="list-group-item d-flex gap-2 align-items-center">
+                  <li class="outcome-list">
                     x
-                    <select class="form-select" v-model="waterPer">
+                    <select class="form-select" v-model="formula.water_per">
                       <option>2.6</option>
                       <option>2.8</option>
                     </select>
                   </li>
-                  <li class="list-group-item d-flex gap-2 align-items-center">
+                  <li class="outcome-list">
                     = H2O:
-                    <input type="text" class="form-control w-50" disabled /> g
+                    <input
+                      type="text"
+                      class="form-control w-50"
+                      v-model="water"
+                      disabled
+                    />
+                    g
                   </li>
                 </ul>
               </div>
@@ -127,120 +145,117 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal -->
-  <div
-    class="modal fade"
-    id="exampleModal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">配方紀錄</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="list-group" style="text-align: left">
-            <button
-              type="button"
-              class="list-group-item list-group-item-action d-flex"
-              data-bs-dismiss="modal"
-            >
-              A second item
-              <span class="material-icons-outlined ms-auto">
-                arrow_forward_ios
-              </span>
-            </button>
-            <button
-              type="button"
-              class="list-group-item list-group-item-action"
-              data-bs-dismiss="modal"
-            >
-              A third button item
-            </button>
-            <button
-              type="button"
-              class="list-group-item list-group-item-action"
-              data-bs-dismiss="modal"
-            >
-              A fourth button item
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <record-component/>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
-function uuidv4() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-class OilItem {
-  constructor(oil, gram) {
-    this.id = uuidv4();
-    console.log(this.id);
-    this.oil = oil;
-    this.gram = gram;
-  }
-}
+import recordComponent from "../components/FormulaRecord.vue";
+import { OilItem, SoapFormula } from "../model/models";
 
 export default defineComponent({
+  props:{
+      id:{
+        type:String
+      }
+  },
+  components: {
+    recordComponent,
+  },
   data() {
     return {
-      formulaName: "",
-      oilList: [new OilItem(), new OilItem()],
-      naOHPer: 100,
-      waterPer: 2.6,
+      isFirstMounte:true,
+      formula: new SoapFormula()
     };
   },
-  computed: {},
-  methods: {
-    addOilItem() {
-      this.oilList.push(new OilItem());
+  created()
+  {
+      let localData=this.$soapFormulas.findData(a=>a.id==this.id);
+      if(localData)
+      {
+          this.formula.water_per=2.6;
+          this.formula.alkali_per=100;
+      }
+      else
+      {
+          this.formula=localData!;
+      }
+  },
+  beforeUpdate()
+  {
+      this.isFirstMounte=false;
+  },
+  computed: {
+    alkali():number
+    {
+        let alkaliVal: number = 0;
+        if(this.isFirstMounte&&!this.id)
+        {
+            alkaliVal=this.formula.alkali;
+        }
+        else
+        {
+            this.formula.oilItems.forEach((oil) => {
+          let oilData = this.$oilDatas.findData((a) => a.id == oil.oil_id);
+          alkaliVal += oilData!.naoh_per * oil.gram;
+        });
+        }
+       return alkaliVal;
     },
-    removeOilItem(item) {
-      const index = this.oilList.indexOf(item);
-      if (index > -1) {
-        this.oilList.splice(index, 1);
+    water():number{
+     let val:number;
+        if(this.isFirstMounte&&!this.id)
+        {
+            val=this.formula.h2o;
+        }
+        else
+        {
+            val=this.formula.alkali*this.formula.water_per;
+        }
+       return val;
+    },
+  },
+  methods: {
+    //新增原料油
+    addOilItem() {
+      this.formula.oilItems.push(new OilItem());
+    },
+    //移除原料油
+    removeOilItem(id: string) {
+      let data = this.formula.oilItems.find((a) => a.oil_id == id);
+      let index = this.formula.oilItems.indexOf(data!);
+      if (index >= 0) {
+        this.formula.oilItems.splice(index, 1);
       }
     },
-    minusNaOHPer() {
-      this.naOHPer--;
+    //儲存配方
+    saveFormula() {
+      this.$soapFormulas.addData(this.formula);
     },
-    plusNaOHPer() {
-      this.naOHPer++;
-    },
+    //刪除配方
+    deleteFormula() {
+      this.$soapFormulas.removeData(this.formula);
+    }
   },
 });
 </script>
 
+<style scoped lang="scss">
+@import "bootstrap/scss/bootstrap";
 
-<style scoped lang='scss'>
-@import 'bootstrap/scss/bootstrap.scss';
+.nav-btn {
+  @extend .btn, .btn-sm, .mt-2, .d-flex, .align-items-center;
 
-#formula {
-  .nav-btn {
-    @extend .btn,
-      .btn-outline-dark,
-      .btn-sm,
-      .mt-2,
-      .d-flex,
-      .align-items-center;
+  &:not([btn-color]) {
+    @extend .btn-outline-dark;
   }
+
+  &[btn-color="dark"] {
+    @extend .btn-outline-dark;
+  }
+}
+
+.outcome-list {
+  @extend .list-group-item, .d-flex, .gap-2, .align-items-center;
 }
 </style>
