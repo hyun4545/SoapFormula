@@ -1,35 +1,31 @@
 import localForage from "localforage";
 
 class LocalStorageService<T> {
-  private datas: T[] = [];
+  private datas: Array<T> = new Array<T>();
   key: string;
   constructor(key: string) {
     this.key = key;
-    localForage.getItem<T[]>(key).then((a) => {
-      this.datas = a!;
+    localForage.getItem<string>(key).then((a) => {
+      if (a) {
+        this.datas = JSON.parse(a);
+      }
     });
   }
 
   saveDatas() {
-    localForage.setItem(this.key, this.datas);
+      localForage.setItem<string>(this.key, JSON.stringify(this.datas));
   }
 
-  addData(data:T) {
+  addData(data: T) {
     this.datas.push(data);
     this.saveDatas();
   }
 
-  findData(filter:(d:T)=>boolean):T|undefined
-  {
-    return this.datas.find(filter);
-  }
-
-  getDatas()
-  {
+  getDatas() {
     return this.datas;
   }
 
-  removeData(item:T) {
+  removeData(item: T) {
     const index = this.datas.indexOf(item);
     if (index >= 0) {
       this.datas.splice(index, 1);

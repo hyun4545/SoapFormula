@@ -1,29 +1,26 @@
 import globalService from "../service/globalService";
 
-export class SortCoulmn{
-  public columnName:string;
+export class SortCoulmn {
+  public columnName: string;
 
-  public text:string;
+  public text: string;
 
-  constructor(columnName:string,text:string)
-  {
-    this.columnName=columnName;
-    this.text=text;
+  constructor(columnName: string, text: string) {
+    this.columnName = columnName;
+    this.text = text;
   }
 }
 
 //原料油特性
-export class FeatureType{
-
+export class FeatureType {
   //編號
-  public id:number;
+  public id: number;
   //特性說明
-  public desc:string;
+  public desc: string;
 
-  constructor(id:number,desc:string)
-  {
-    this.id=id;
-    this.desc=desc;
+  constructor(id: number, desc: string) {
+    this.id = id;
+    this.desc = desc;
   }
 }
 
@@ -31,7 +28,7 @@ export class FeatureType{
 export class SoapFormula {
   public id!: string;
   //配方名稱
-  public name!:string;
+  public name!: string;
   //原料油
   public oilItems!: Array<OilItem>;
   //鹼性比例
@@ -54,8 +51,8 @@ export class OilItem {
 
 //原料油資料
 export class OilData {
-  public id: string;
-  
+  public id!: string;
+
   //中文名稱
   public cname!: string;
   //英文名稱
@@ -67,11 +64,7 @@ export class OilData {
   //INS值
   public ins_val!: number;
   //特性
-  public featureId!:number;
+  public featureId!: number;
   //說明
   public desc!: string;
-
-  constructor() {
-    this.id = globalService.uuidv4();
-  }
 }

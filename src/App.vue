@@ -1,18 +1,23 @@
 <template>
-  <div class="vh-100 overflow-hidden">
+  <div class="container-fluid">
     <v-nav />
-    <router-view />
+    <div style="margin-top: 80px">
+      <router-view/>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent } from "vue";
 import vNav from "./views/Nav.vue";
+import localForage from "localforage";
 
 export default defineComponent({
-  setup() {
-
-  
+  setup() {},
+  methods: {
+    clearForage() {
+      localForage.clear();
+    },
   },
   components: {
     vNav,

@@ -16,7 +16,7 @@
           <button class="nav-btn" @click="saveFormula()">
             <span class="material-icons-outlined"> save </span>儲存
           </button>
-          <button v-if="this.id" class="nav-btn" @click="deleteFormula()">
+          <button v-if="id" class="nav-btn" @click="deleteFormula()">
             <span class="material-icons-outlined"> delete </span>刪除
           </button>
           <button class="nav-btn">
@@ -91,7 +91,7 @@
                       <button
                         class="btn btn-outline-secondary"
                         type="button"
-                        @click="naOHPer++"
+                        @click="formula.alkali_per++"
                       >
                         +
                       </button>
@@ -103,7 +103,7 @@
                       <button
                         class="btn btn-outline-secondary"
                         type="button"
-                        @click="naOHPer--"
+                        @click="formula.alkali_per--"
                       >
                         -
                       </button>
@@ -145,7 +145,7 @@
       </div>
     </div>
   </div>
-  <record-component/>
+  <record-component />
 </template>
 
 <script lang="ts">
@@ -154,65 +154,58 @@ import recordComponent from "../components/FormulaRecord.vue";
 import { OilItem, SoapFormula } from "../model/models";
 
 export default defineComponent({
-  props:{
-      id:{
-        type:String
-      }
+  props: {
+    id: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
   },
   components: {
     recordComponent,
   },
   data() {
+    let localData = this.$soapFormulas.getDatas()?.find((a) => a.id == this.id);
+    if (!localData) {
+      localData = new SoapFormula();
+      localData.water_per = 2.6;
+      localData.alkali_per = 100;
+      localData.oilItems = new Array<OilItem>();
+    }
     return {
-      isFirstMounte:true,
-      formula: new SoapFormula()
+      isFirstMounte: true,
+      formula: localData,
     };
   },
-  created()
-  {
-      let localData=this.$soapFormulas.findData(a=>a.id==this.id);
-      if(localData)
-      {
-          this.formula.water_per=2.6;
-          this.formula.alkali_per=100;
-      }
-      else
-      {
-          this.formula=localData!;
-      }
-  },
-  beforeUpdate()
-  {
-      this.isFirstMounte=false;
+  beforeUpdate() {
+    console.log("formula beforeUpdate!!");
+    this.isFirstMounte = false;
   },
   computed: {
-    alkali():number
-    {
-        let alkaliVal: number = 0;
-        if(this.isFirstMounte&&!this.id)
-        {
-            alkaliVal=this.formula.alkali;
-        }
-        else
-        {
-            this.formula.oilItems.forEach((oil) => {
-          let oilData = this.$oilDatas.findData((a) => a.id == oil.oil_id);
-          alkaliVal += oilData!.naoh_per * oil.gram;
+    alkali(): number {
+      let alkaliVal: number = 0;
+      if (this.isFirstMounte && !this.id) {
+        alkaliVal = this.formula.alkali;
+      } else {
+        this.formula.oilItems.forEach((oil) => {
+          let oilData = this.$oilDatas
+            .getDatas()
+            ?.find((a) => a.id == oil.oil_id);
+          if (oilData) {
+            alkaliVal += oilData.naoh_per * oil.gram;
+          }
         });
-        }
-       return alkaliVal;
+      }
+      return alkaliVal;
     },
-    water():number{
-     let val:number;
-        if(this.isFirstMounte&&!this.id)
-        {
-            val=this.formula.h2o;
-        }
-        else
-        {
-            val=this.formula.alkali*this.formula.water_per;
-        }
-       return val;
+    water(): number {
+      let val: number;
+      if (this.isFirstMounte && !this.id) {
+        val = this.formula.h2o;
+      } else {
+        val = this.formula.alkali * this.formula.water_per;
+      }
+      return val;
     },
   },
   methods: {
@@ -235,7 +228,7 @@ export default defineComponent({
     //刪除配方
     deleteFormula() {
       this.$soapFormulas.removeData(this.formula);
-    }
+    },
   },
 });
 </script>

@@ -1,20 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/Formula",
+    alias: "/Formula",
     name: "Formula",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: function () {
       return import("@/views/Formula.vue");
+    },
+  },
+  {
+    path: "/OilList",
+    name: "OilList",
+    component: function () {
+      return import("@/views/OilList.vue");
     },
   },
 ];

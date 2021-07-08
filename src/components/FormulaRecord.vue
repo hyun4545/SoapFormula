@@ -20,13 +20,15 @@
         </div>
         <div class="modal-body">
           <div class="list-group" style="text-align: left">
-            <button v-for="item in formulas" v-bind:key="item.id"
+            <button
+              v-for="item in formulas"
+              v-bind:key="item.id"
               type="button"
               class="list-group-item list-group-item-action d-flex"
               data-bs-dismiss="modal"
               @click="selectFormula(item.id)"
             >
-             {{item.name}}
+              {{ item.name }}
               <span class="material-icons-outlined ms-auto">
                 arrow_forward_ios
               </span>
@@ -42,23 +44,17 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  data()
-  {
+  data() {
     return {
-      formulas:this.$soapFormulas.getDatas()
-    }
+      formulas: this.$soapFormulas.getDatas(),
+    };
   },
-  methods:
-  {
-    selectFormula(id:string)
-    {
-        this.$router.push({ name: 'Formula', params: { id: id } })
-    }
-  }
-  
+  methods: {
+    selectFormula(id: string) {
+      this.$router.push({ name: "Formula", params: { id: id } });
+    },
+  },
 });
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

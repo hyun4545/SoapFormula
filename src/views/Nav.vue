@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-light bg-light fiex-top">
+  <nav class="navbar navbar-expand-sm fixed-top navbar-light bg-light fiex-top">
     <div class="container-fluid flex-column">
       <div class="container-fluid">
         <button
@@ -36,7 +36,7 @@
             </li>
             |
             <li class="nav-item menu-item">
-              <router-link to="/Formula">Oil List</router-link>
+              <router-link to="/OilList">Oil List</router-link>
             </li>
           </ul>
         </div>
@@ -75,11 +75,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  
   setup() {},
-  data()
-  {
-  
-  }
+  data() {},
 });
 </script>
