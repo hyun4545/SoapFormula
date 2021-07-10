@@ -53,7 +53,7 @@
     </div>
   </div>
 
-  <oil-edit :oilData="currentOilItem" />
+  <oil-edit ref="oilEditModal" :oilData="currentOilItem" />
 </template>
 
 <script lang="ts">
@@ -77,12 +77,12 @@ export default defineComponent({
   },
   methods: {
     showEditModal(item?: OilData) {
-      let elModal = this.$refs.oilEditModal as any;
+      let elModal = this.$refs.oilEditModal as InstanceType<typeof oilEdit>;
       elModal?.clearData();
       if (item) {
         this.currentOilItem = item;
       }
-      elModal?.showModal();
+      elModal?.toggleModal(true);
     },
   },
 });

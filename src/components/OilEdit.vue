@@ -15,17 +15,8 @@
                     <tr>
                       <th>中文</th>
                       <td>
-                        <input
-                          type="text"
-                          :class="{
-                            'form-control': true,
-                            'is-invalid': error_msg.cname,
-                          }"
-                          v-model="oil_data.cname"
-                        />
-                        <div class="invalid-feedback">
-                          {{ error_msg.cname }}
-                        </div>
+                        <input type="text" require v-model="oil_data.cname" />
+                        <div class="invalid-feedback">必填</div>
                       </td>
                     </tr>
                     <tr>
@@ -52,14 +43,9 @@
                           type="text"
                           class="form-control"
                           v-model="oil_data.naoh_per"
-                          :class="{
-                            'form-control': true,
-                            'is-invalid': error_msg.naoh_per,
-                          }"
+                          require
                         />
-                        <div class="invalid-feedback">
-                          {{ error_msg.naoh_per }}
-                        </div>
+                        <div class="invalid-feedback">必填</div>
                       </td>
                     </tr>
                     <tr>
@@ -94,71 +80,6 @@
                 <td><button class="btn float-right">+新增特性</button></td>
               </tr>
             </table>
-            <!--div class="d-flex mb-3">
-              <label class="">原料油名稱</label>
-              <div class="">
-                <div class="d-flex flex-fill">
-                  <label class="d-block flex-fill">中文</label>
-                  <input
-                    type="text"
-                    class="form-control col-10 flex-fill"
-                    v-model="oil_data.cname"
-                    required
-                  />
-                  <div class="invalid-feedback">＊必填</div>
-                </div>
-                <div class="d-flex">
-                  <label class="">英文</label>
-                  <input
-                    type="text"
-                    class="form-control col-8"
-                    v-model="oil_data.name"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-4 col-form-label">皂化價</label>
-              <div class="col-8">
-                <div class="row">
-                  <label class="col-4 col-form-label">NaOH</label>
-                  <input
-                    type="text"
-                    class="form-control col-8"
-                    v-model="oil_data.naoh_per"
-                    required
-                  />
-                  <div class="invalid-feedback">＊必填</div>
-                </div>
-                <div class="row">
-                  <label class="col-4 col-form-label">KOH</label>
-                  <input
-                    type="text"
-                    class="form-control col-8"
-                    v-model="oil_data.koh_per"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-4 col-form-label">INS值</label>
-              <div class="col-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="oil_data.ins_val"
-                />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-4 col-form-label">特性</label>
-              <div class="col-8">
-                <select class="form-select"></select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <button class="btn float-right">+新增特性</button>
-            </div-->
           </form>
         </div>
         <div class="modal-footer">
@@ -178,6 +99,7 @@
 import { OilData } from "@/model/models";
 import { defineComponent } from "vue";
 import Modal from "bootstrap/js/dist/modal";
+import require from "@/plugin/require_mixin";
 
 export default defineComponent({
   props: {
@@ -189,7 +111,6 @@ export default defineComponent({
   },
   data() {
     return {
-      error_msg: Object(),
       oil_data: new OilData(),
     };
   },
@@ -203,36 +124,26 @@ export default defineComponent({
   mounted() {
     this.clearData();
   },
+  extends: require,
   methods: {
     clearData() {
-      console.log("clear");
-      this.oil_data=new OilData();
-      this.error_msg["cname"] = "";
-      this.error_msg["naoh_per"] = "";
+      this.oil_data = new OilData();
+      this.clearRequire();
     },
-    showModal()
-    {
-        let oilModal = this.$refs.editModal as HTMLElement;
-        if (oilModal) {
-          new Modal(oilModal).show();
+    toggleModal(isShow: boolean) {
+      let modal = this.$refs.editModal as HTMLElement;
+      if (modal) {
+        if (isShow) {
+          new Modal(modal).show();
+        } else {
+          new Modal(modal).hide();
         }
+      }
     },
     saveOilData() {
-      let isValidate = true;
-      if (!this.oil_data.cname) {
-        this.error_msg.cname = "＊必填";
-        isValidate = false;
-      }
-      if (!this.oil_data.naoh_per) {
-        this.error_msg.naoh_per = "＊必填";
-        isValidate = false;
-      }
-      if (isValidate) {
+      if (this.validate()) {
         this.$oilDatas.addData(this.oil_data);
-        let oilModal = this.$refs.editModal as HTMLElement;
-        if (oilModal) {
-          new Modal(oilModal).hide();
-        }
+        this.toggleModal(false);
       }
     },
   },

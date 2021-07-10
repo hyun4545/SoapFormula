@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "material-icons/iconfont/material-icons.css";
 import LocalStorageService from "./service/localdataService";
 import { FeatureType, OilData, SoapFormula, SortCoulmn } from "./model/models";
-import settingData from "@/model/settingData";
+import settingData from "@/model/mockData";
 
 const FORMULA_NAME = "SoapFormulas";
 const FEATURE_NAME = "OilFeatures"

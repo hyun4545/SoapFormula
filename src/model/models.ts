@@ -1,4 +1,4 @@
-import globalService from "../service/globalService";
+import validateDecorator from "./validateDecorator"; 
 
 export class SortCoulmn {
   public columnName: string;
@@ -39,6 +39,26 @@ export class SoapFormula {
   public water_per!: number;
   //水(g)
   public h2o!: number;
+
+  public p_datetime!:Date;
+
+  //製作季節
+  @validateDecorator.require
+  public season!: FormulaSeason;
+}
+
+export class FormulaSeason {
+  public id: string;
+
+  public name: string;
+
+  public num: number;
+
+  constructor(id: string, name: string, num: number) {
+    this.id = id;
+    this.name = name;
+    this.num = num;
+  }
 }
 
 //原料油配方

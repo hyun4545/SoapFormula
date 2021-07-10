@@ -86,6 +86,25 @@
               <div id="output-body" class="accordion-body">
                 <ul class="list-group list-group-flush">
                   <li class="outcome-list">
+                    總油量:
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="alkali"
+                      disabled
+                    />
+                    g
+                  </li>
+                  <li class="outcome-list">
+                    總INS值:
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="alkali"
+                      disabled
+                    />
+                  </li>
+                  <li class="outcome-list">
                     NaOH:
                     <div class="input-group px-3" style="min-width: 150px">
                       <button
@@ -114,18 +133,45 @@
                     NaOH:
                     <input
                       type="text"
-                      class="form-control w-50"
+                      class="form-control"
                       v-model="alkali"
                       disabled
                     />
                     g
                   </li>
                   <li class="outcome-list">
-                    x
-                    <select class="form-select" v-model="formula.water_per">
-                      <option>2.6</option>
-                      <option>2.8</option>
+                    季節
+                    <select class="form-select">
+                      <option v-for="s in season" v-bind:key="s.id" :value="s.num">
+                        {{ s.name }}
+                      </option>
                     </select>
+                  </li>
+                  <li class="outcome-list">
+                    x
+                    <div class="input-group px-3" style="min-width: 150px">
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        @click="formula.water_per++"
+                      >
+                        +
+                      </button>
+                      <input
+                        type="text"
+                        style="width: 50px !important"
+                        class="form-control"
+                        v-model="formula.water_per"
+                      />
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        @click="formula.water_per--"
+                      >
+                        -
+                      </button>
+                    </div>
+                    %
                   </li>
                   <li class="outcome-list">
                     = H2O:
@@ -151,7 +197,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import recordComponent from "../components/FormulaRecord.vue";
-import { OilItem, SoapFormula } from "../model/models";
+import { FormulaSeason, OilItem, SoapFormula } from "../model/models";
 
 export default defineComponent({
   props: {
@@ -168,11 +214,20 @@ export default defineComponent({
     let localData = this.$soapFormulas.getDatas()?.find((a) => a.id == this.id);
     if (!localData) {
       localData = new SoapFormula();
-      localData.water_per = 2.6;
       localData.alkali_per = 100;
       localData.oilItems = new Array<OilItem>();
     }
+
+    let season: FormulaSeason[] = [];
+    season.push(new FormulaSeason("spring", "春", -2));
+    season.push(new FormulaSeason("summer", "夏", -1));
+    season.push(new FormulaSeason("autumn", "秋", 1));
+    season.push(new FormulaSeason("winter", "冬", 2));
+
     return {
+      season,
+      ins_range: { min: 170, max: 120, center: 145 },
+      water_per_range: { min: 1, max: 3.5, center: 2.3 },
       isFirstMounte: true,
       formula: localData,
     };
@@ -198,6 +253,9 @@ export default defineComponent({
       }
       return alkaliVal;
     },
+    /*water_per():number{
+        let ins_per=
+    },*/
     water(): number {
       let val: number;
       if (this.isFirstMounte && !this.id) {
